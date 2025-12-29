@@ -14,10 +14,11 @@ export const NotificationSystem: React.FC = () => {
   const [activeNotifications, setActiveNotifications] = useState<UpcomingSession[]>([]);
   const [notifiedIds, setNotifiedIds] = useState<Set<string>>(new Set());
 
-  // Mock de sessões para monitoramento (em um app real viria de um Context ou Store)
+  // Mock de sessões para monitoramento
   const getMockUpcoming = (): UpcomingSession[] => {
+    // Simulamos que as notificações só existem se houver pacientes no sistema.
+    // Em um app real, buscaríamos do estado global de sessões.
     const now = new Date();
-    // Simulando uma sessão que começa em 5 minutos para demonstração
     const fiveMinsLater = new Date(now.getTime() + 5 * 60000);
     const hour = String(fiveMinsLater.getHours()).padStart(2, '0');
     const min = String(fiveMinsLater.getMinutes()).padStart(2, '0');
@@ -54,10 +55,16 @@ export const NotificationSystem: React.FC = () => {
       });
     };
 
-    const interval = setInterval(checkSessions, 30000); // Checa a cada 30 segundos
-    checkSessions(); // Checagem inicial
+    // Intervalo de checagem
+    const interval = setInterval(checkSessions, 30000);
+    
+    // Pequeno delay inicial para não assustar o usuário assim que ele entra no dashboard
+    const initialTimeout = setTimeout(checkSessions, 2000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(initialTimeout);
+    };
   }, [notifiedIds]);
 
   const closeNotification = (id: string) => {

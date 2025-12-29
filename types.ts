@@ -58,6 +58,7 @@ export interface Message {
 
 export enum ViewState {
   LANDING = 'LANDING',
+  AUTH = 'AUTH',
   DASHBOARD = 'DASHBOARD',
   CLIENTS = 'CLIENTS',
   CALENDAR = 'CALENDAR',
