@@ -1,10 +1,25 @@
 
 import React, { useState } from 'react';
-import { Shield, Rocket, CheckCircle2, AlertCircle, Terminal, Globe, Key, FileJson, Share2, Server } from 'lucide-react';
+import { 
+  Shield, Rocket, CheckCircle2, AlertCircle, Terminal, 
+  Globe, Key, FileJson, Share2, Server, User, Mail, 
+  Lock, Save, Check, Eye, EyeOff
+} from 'lucide-react';
 
 export const Settings: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'perfil' | 'sistema'>('perfil');
   const [isProduction, setIsProduction] = useState(false);
   const [apiKeyStatus, setApiKeyStatus] = useState<'connected' | 'checking' | 'error'>('connected');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Estados do perfil
+  const [profileData, setProfileData] = useState({
+    firstName: 'Dr. Silva',
+    lastName: 'Psicólogo',
+    email: 'contato@drsilva.com.br',
+    password: '**************'
+  });
 
   const deploymentChecklist = [
     { id: 1, task: 'Configurar Variáveis de Ambiente (API_KEY)', completed: true },
@@ -28,82 +43,196 @@ export const Settings: React.FC = () => {
     link.click();
   };
 
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
   return (
     <div className="h-full flex flex-col gap-8 animate-fade-in pb-20 md:pb-0 overflow-y-auto no-scrollbar font-sans">
       <header>
-        <h2 className="text-3xl font-light text-brand-primary">Centro de Lançamento</h2>
-        <p className="text-brand-slate mt-1 font-light">Gerencie o status de produção e configurações do sistema.</p>
+        <h2 className="text-3xl font-light text-brand-primary">Configurações</h2>
+        <p className="text-brand-slate mt-1 font-light">Gerencie sua conta profissional e as preferências do sistema.</p>
       </header>
+
+      {/* Navegação por Abas */}
+      <div className="flex gap-6 border-b border-brand-primary/5 pb-2 overflow-x-auto no-scrollbar">
+        <button 
+          onClick={() => setActiveTab('perfil')}
+          className={`flex items-center gap-2 pb-2 px-1 text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'perfil' ? 'text-brand-primary border-b-2 border-brand-accent' : 'text-brand-primary/30 hover:text-brand-primary'}`}
+        >
+          <User size={14} /> Minha Conta & Perfil
+        </button>
+        <button 
+          onClick={() => setActiveTab('sistema')}
+          className={`flex items-center gap-2 pb-2 px-1 text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'sistema' ? 'text-brand-primary border-b-2 border-brand-accent' : 'text-brand-primary/30 hover:text-brand-primary'}`}
+        >
+          <Rocket size={14} /> Centro de Lançamento
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Status Card */}
         <div className="lg:col-span-2 space-y-8">
           
-          <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/60 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-brand-primary flex items-center gap-2">
-                <Rocket size={20} className="text-brand-accent" /> Status de Deploy
-              </h3>
-              <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${isProduction ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                {isProduction ? 'Produção' : 'Ambiente de Teste'}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {deploymentChecklist.map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-brand-primary/5">
-                  <span className={`text-sm ${item.completed ? 'text-brand-primary font-medium' : 'text-brand-slate/40'}`}>
-                    {item.task}
-                  </span>
-                  {item.completed ? (
-                    <CheckCircle2 size={18} className="text-brand-accent" />
-                  ) : (
-                    <AlertCircle size={18} className="text-brand-primary/10" />
-                  )}
+          {/* TAB: PERFIL */}
+          {activeTab === 'perfil' && (
+            <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/60 shadow-sm animate-fade-in">
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h3 className="text-lg font-bold text-brand-primary flex items-center gap-2">
+                    <User size={20} className="text-brand-accent" /> Informações Pessoais
+                  </h3>
+                  <p className="text-xs text-brand-slate/60 mt-1">Esses dados aparecem no seu cabeçalho e comunicados aos pacientes.</p>
                 </div>
-              ))}
-            </div>
+                {showSuccess && (
+                  <div className="flex items-center gap-2 text-brand-primary bg-brand-accent/20 px-4 py-2 rounded-full animate-fade-in">
+                    <Check size={14} strokeWidth={3} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Salvo com sucesso</span>
+                  </div>
+                )}
+              </div>
 
-            <div className="mt-8 pt-8 border-t border-brand-primary/5 flex flex-col md:flex-row gap-4">
-              <button 
-                onClick={() => setIsProduction(!isProduction)}
-                className={`flex-1 py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg ${isProduction ? 'bg-white border border-brand-primary/10 text-brand-primary' : 'bg-brand-primary text-brand-accent shadow-brand-primary/20'}`}
-              >
-                {isProduction ? 'Reverter para Homologação' : 'Mudar para Modo Produção'}
-              </button>
-              <button 
-                onClick={handleExportData}
-                className="flex-1 bg-white border border-brand-primary/10 text-brand-primary py-4 rounded-2xl font-bold text-sm hover:bg-brand-primary/5 transition-all flex items-center justify-center gap-2"
-              >
-                <FileJson size={18} /> Exportar Banco de Dados
-              </button>
-            </div>
-          </div>
+              <form onSubmit={handleSaveProfile} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-brand-primary/40 uppercase tracking-widest ml-1">Nome</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-primary/20" size={18} />
+                      <input 
+                        type="text" 
+                        value={profileData.firstName}
+                        onChange={(e) => setProfileData({...profileData, firstName: e.target.value})}
+                        className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl pl-12 pr-4 py-3.5 outline-none focus:border-brand-accent transition-all text-brand-primary font-medium" 
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-brand-primary/40 uppercase tracking-widest ml-1">Sobrenome / Título</label>
+                    <input 
+                      type="text" 
+                      value={profileData.lastName}
+                      onChange={(e) => setProfileData({...profileData, lastName: e.target.value})}
+                      className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl px-5 py-3.5 outline-none focus:border-brand-accent transition-all text-brand-primary font-medium" 
+                    />
+                  </div>
+                </div>
 
-          <div className="bg-brand-primary text-brand-accent rounded-[2.5rem] p-8 shadow-2xl shadow-brand-primary/20 relative overflow-hidden group">
-            <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all"></div>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 relative z-10">
-               <Globe size={22} /> Próximos Passos para Lançamento Real
-            </h3>
-            <div className="space-y-4 relative z-10">
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">01</div>
-                <p className="text-white/80 text-sm leading-relaxed">Conecte seu repositório Git a uma plataforma como <span className="text-white font-bold">Vercel</span> ou <span className="text-white font-bold">Netlify</span>.</p>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-brand-primary/40 uppercase tracking-widest ml-1">E-mail Profissional</label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-primary/20" size={18} />
+                    <input 
+                      type="email" 
+                      value={profileData.email}
+                      onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                      className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl pl-12 pr-4 py-3.5 outline-none focus:border-brand-accent transition-all text-brand-primary font-medium" 
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-4 border-t border-brand-primary/5">
+                  <label className="text-[10px] font-bold text-brand-primary/40 uppercase tracking-widest ml-1">Alterar Senha</label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-primary/20" size={18} />
+                    <input 
+                      type={showPassword ? 'text' : 'password'} 
+                      value={profileData.password}
+                      onChange={(e) => setProfileData({...profileData, password: e.target.value})}
+                      className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl pl-12 pr-14 py-3.5 outline-none focus:border-brand-accent transition-all text-brand-primary font-medium" 
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-brand-primary/20 hover:text-brand-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex pt-6">
+                  <button 
+                    type="submit"
+                    className="flex-1 bg-brand-primary text-brand-accent py-4 rounded-2xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3"
+                  >
+                    <Save size={18} /> Salvar Alterações
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* TAB: SISTEMA / LANÇAMENTO */}
+          {activeTab === 'sistema' && (
+            <div className="space-y-8 animate-fade-in">
+              <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/60 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-lg font-bold text-brand-primary flex items-center gap-2">
+                    <Rocket size={20} className="text-brand-accent" /> Status de Deploy
+                  </h3>
+                  <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${isProduction ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                    {isProduction ? 'Produção' : 'Ambiente de Teste'}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {deploymentChecklist.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-brand-primary/5">
+                      <span className={`text-sm ${item.completed ? 'text-brand-primary font-medium' : 'text-brand-slate/40'}`}>
+                        {item.task}
+                      </span>
+                      {item.completed ? (
+                        <CheckCircle2 size={18} className="text-brand-accent" />
+                      ) : (
+                        <AlertCircle size={18} className="text-brand-primary/10" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-brand-primary/5 flex flex-col md:flex-row gap-4">
+                  <button 
+                    onClick={() => setIsProduction(!isProduction)}
+                    className={`flex-1 py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg ${isProduction ? 'bg-white border border-brand-primary/10 text-brand-primary' : 'bg-brand-primary text-brand-accent shadow-brand-primary/20'}`}
+                  >
+                    {isProduction ? 'Reverter para Homologação' : 'Mudar para Modo Produção'}
+                  </button>
+                  <button 
+                    onClick={handleExportData}
+                    className="flex-1 bg-white border border-brand-primary/10 text-brand-primary py-4 rounded-2xl font-bold text-sm hover:bg-brand-primary/5 transition-all flex items-center justify-center gap-2"
+                  >
+                    <FileJson size={18} /> Exportar Banco de Dados
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">02</div>
-                <p className="text-white/80 text-sm leading-relaxed">Adicione a variável <span className="font-mono bg-white/10 px-1 rounded text-white">API_KEY</span> nas configurações da plataforma escolhida.</p>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">03</div>
-                <p className="text-white/80 text-sm leading-relaxed">Compartilhe o link gerado com sua primeira leva de testadores Beta para aprovação.</p>
+
+              <div className="bg-brand-primary text-brand-accent rounded-[2.5rem] p-8 shadow-2xl shadow-brand-primary/20 relative overflow-hidden group">
+                <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all"></div>
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2 relative z-10">
+                   <Globe size={22} /> Próximos Passos para Lançamento Real
+                </h3>
+                <div className="space-y-4 relative z-10">
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">01</div>
+                    <p className="text-white/80 text-sm leading-relaxed">Conecte seu repositório Git a uma plataforma como <span className="text-white font-bold">Vercel</span> ou <span className="text-white font-bold">Netlify</span>.</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">02</div>
+                    <p className="text-white/80 text-sm leading-relaxed">Adicione a variável <span className="font-mono bg-white/10 px-1 rounded text-white">API_KEY</span> nas configurações da plataforma escolhida.</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center font-bold text-xs">03</div>
+                    <p className="text-white/80 text-sm leading-relaxed">Compartilhe o link gerado com sua primeira leva de testadores Beta para aprovação.</p>
+                  </div>
+                </div>
+                <button className="mt-8 bg-brand-accent text-brand-primary px-8 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-all shadow-xl shadow-brand-accent/20">
+                   Gerar Link de Convite Beta
+                </button>
               </div>
             </div>
-            <button className="mt-8 bg-brand-accent text-brand-primary px-8 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-all shadow-xl shadow-brand-accent/20">
-               Gerar Link de Convite Beta
-            </button>
-          </div>
+          )}
         </div>
 
         {/* Sidebar Info */}
