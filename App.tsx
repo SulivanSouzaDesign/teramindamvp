@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ViewState } from './types';
 import { Navigation } from './components/Navigation';
@@ -7,6 +8,8 @@ import { Chat } from './components/Chat';
 import { MedicalRecord } from './components/MedicalRecord';
 import { Calendar } from './components/Calendar';
 import { OrganicShape } from './components/OrganicShape';
+import { NotificationSystem } from './components/NotificationSystem';
+import { Settings } from './components/Settings';
 
 const LandingPage: React.FC<{ onStart: () => void }> = ({ onStart }) => {
   return (
@@ -80,6 +83,8 @@ export default function App() {
         return <Chat />;
       case ViewState.CALENDAR:
         return <Calendar />;
+      case ViewState.SETTINGS:
+        return <Settings />;
       default:
         return <Dashboard setView={setView} />;
     }
@@ -93,6 +98,9 @@ export default function App() {
     <div className="min-h-screen bg-brand-bg text-brand-slate font-sans selection:bg-brand-accent/30">
       <OrganicShape className="top-[-20%] right-[-10%] w-[800px] h-[800px] opacity-10" color="#152C2E" />
       <OrganicShape className="bottom-[-20%] left-[-10%] w-[600px] h-[600px] opacity-20" color="#A3E635" delay="-5s" />
+
+      {/* Global Notification System */}
+      <NotificationSystem />
 
       <div className="flex h-screen overflow-hidden">
         <Navigation 

@@ -1,3 +1,4 @@
+
 export interface Client {
   id: string;
   name: string;
@@ -61,5 +62,6 @@ export enum ViewState {
   CLIENTS = 'CLIENTS',
   CALENDAR = 'CALENDAR',
   CHAT = 'CHAT',
-  MEDICAL_RECORD = 'MEDICAL_RECORD'
+  MEDICAL_RECORD = 'MEDICAL_RECORD',
+  SETTINGS = 'SETTINGS'
 }

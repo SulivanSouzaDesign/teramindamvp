@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { ViewState } from '../types';
-import { LayoutDashboard, Users, Calendar, MessageSquare, LogOut, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, MessageSquare, LogOut, ClipboardList, Settings } from 'lucide-react';
 
 interface NavigationProps {
   currentView: ViewState;
@@ -15,6 +16,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentView, setView, on
     { id: ViewState.MEDICAL_RECORD, icon: ClipboardList, label: 'Prontuário' },
     { id: ViewState.CALENDAR, icon: Calendar, label: 'Agenda' },
     { id: ViewState.CHAT, icon: MessageSquare, label: 'Mensagens' },
+    { id: ViewState.SETTINGS, icon: Settings, label: 'Ajustes' },
   ];
 
   return (
